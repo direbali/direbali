@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play DIRE</title>
+    <link href="/src/app.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        /* Game Scene*/
+        #game {
+            width: 100vw;
+            height: 100vh;
+            background: url('/assets/play-bg-1.png') no-repeat;
+            background-size: cover; /* Fixed background size */
+            position: relative;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 2s ease-in-out;
+        }
+
+        /* Chapter 1 */
+        #chapter-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 2s ease-in-out;
+        }
+
+        /* Character (Stickman) */
+        #stickman {
+            position: absolute;
+            bottom: 100px;
+            left: 50px; /* Starts on the left */
+            width: 50px;
+            height: 100px;
+            background: black;
+            border-radius: 10px;
+        }
+
+        /* Control Buttons (Fixed to the Screen) */
+        #controls {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-between;
+            width: calc(100% - 120px);
+            z-index: 500;
+            opacity: 0; /* Initially hidden */
+            visibility: hidden; /* Ensure it's hidden initially */
+            transition: opacity 2s ease-in-out, visibility 2s ease-in-out; /* Smooth fade-in transition */
+        }
+
+        .control-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid black;
+            font-size: 40px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Continue Button (Initially Hidden) */
+        #continue-btn {
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        /* Navigation Bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        nav img {
+            height: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div id="player"></div>
+
+    <!-- Logo and Chapter Screens (Initially Visible) -->
+    <div id="chapter-screen" class="fade-image" style="background-image: url('/assets/chapter-1.png');"></div>
+
+    <!-- Navigation Bar (Fixed at the top) -->
+    <nav class="fixed top-0 left-0 w-full bg-white flex shadow-md z-50">
+        <!-- Left: DIRE Logo -->
+        <div class="flex-none mr-auto">
+            <img class="h-10" src="/assets/logo.png" alt="DIRE Logo">
+        </div>
+
+        <!-- Right: Hamburger Menu -->
+        <div class="flex-none">
+            <img src="/assets/menu-icon.png" alt="Menu Icon" class="w-6 h-6 cursor-pointer" onclick="window.location.href='menu.html'">
+        </div>
+    </nav>
+
+    <!-- Game Scene -->
+    <div id="game">
+        <!-- Stickman Character -->
+        <div id="stickman"></div>
+    </div>
+
+    <!-- Control Buttons (Fixed to the Screen) -->
+    <div id="controls">
+        <button id="leftBtn" class="control-btn">←</button>
+        <button id="rightBtn" class="control-btn">→</button>
+
+        <!-- Continue Button (Initially Hidden) -->
+        <button onclick="location.href = '/play/simulation/?scenario=Hotel'" id="continue-btn" class="control-btn" style="display: none; position: fixed; left: 50%; transform: translateX(-50%); top: 50%; font-size: 32px; width: 250px; height: 60px; border: 3px solid black; background-color: white; color: black; font-weight: bold; text-align: center; display: flex; justify-content: center; align-items: center;">
+            GO INSIDE
+        </button>        
+    </div>
+
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+        const stickman = document.getElementById("stickman");
+        const leftBtn = document.getElementById("leftBtn");
+        const rightBtn = document.getElementById("rightBtn");
+        const chapterScreen = document.getElementById("chapter-screen");
+        const controls = document.getElementById("controls");
+        const continueBtn = document.getElementById("continue-btn");
+
+        let stickmanPos = 50;
+        let screenWidth = window.innerWidth;
+        const moveSpeed = 10;
+        
+        // Calculate trigger zone as percentage of screen width
+        let triggerPosMin = screenWidth * 0.45; // 45% of screen width
+        let triggerPosMax = screenWidth * 0.55; // 55% of screen width
+
+        let moveInterval;
+
+        // Recalculate dimensions when window is resized
+        window.addEventListener("resize", function() {
+            screenWidth = window.innerWidth;
+            triggerPosMin = screenWidth * 0.45;
+            triggerPosMax = screenWidth * 0.55;
+            
+            // Check if button should be visible after resize
+            checkButtonVisibility();
+        });
+
+        // Function to check if button should be visible
+        function checkButtonVisibility() {
+            if (stickmanPos >= triggerPosMin && stickmanPos <= triggerPosMax) {
+                continueBtn.style.display = 'block';
+                continueBtn.style.opacity = '1';
+            } else {
+                continueBtn.style.display = 'none';
+                continueBtn.style.opacity = '0';
+            }
+        }
+
+        // Function to move the character
+        function moveCharacter(direction) {
+            if (direction === "right") {
+                if (stickmanPos < screenWidth - 50) {
+                    stickmanPos += moveSpeed;
+                    stickman.style.left = `${stickmanPos}px`;
+                }
+            } else if (direction === "left") {
+                if (stickmanPos > 50) {
+                    stickmanPos -= moveSpeed;
+                    stickman.style.left = `${stickmanPos}px`;
+                }
+            }
+
+            // Check if button should be visible
+            checkButtonVisibility();
+        }
+
+        // Start moving on button press (Mouse Hold)
+        leftBtn.addEventListener("mousedown", () => {
+            moveInterval = setInterval(() => moveCharacter("left"), 50);
+        });
+        rightBtn.addEventListener("mousedown", () => {
+            moveInterval = setInterval(() => moveCharacter("right"), 50);
+        });
+
+        // Stop moving on button release
+        leftBtn.addEventListener("mouseup", () => clearInterval(moveInterval));
+        rightBtn.addEventListener("mouseup", () => clearInterval(moveInterval));
+
+        // Stop moving on mouse leave
+        leftBtn.addEventListener("mouseleave", () => clearInterval(moveInterval));
+        rightBtn.addEventListener("mouseleave", () => clearInterval(moveInterval));
+
+        // Button Click Events (For single-click functionality)
+        rightBtn.addEventListener("click", () => moveCharacter("right"));
+        leftBtn.addEventListener("click", () => moveCharacter("left"));
+
+        // Keyboard Controls
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight") moveCharacter("right");
+            if (event.key === "ArrowLeft") moveCharacter("left");
+        });
+
+        // Fade Transition Logic for the Screens
+        setTimeout(() => {
+            // Fade in the chapter screen after 2 seconds (total 2 seconds)
+            chapterScreen.style.opacity = '1';
+        }, 2000);
+
+        setTimeout(() => {
+            // Fade out the chapter screen after 2 more seconds (total 4 seconds)
+            chapterScreen.style.opacity = '0';
+        }, 4000);
+
+        setTimeout(() => {
+            // Finally, fade in the game screen after 2 more seconds (total 6 seconds)
+            document.getElementById("game").style.opacity = '1';
+        }, 6000);
+
+        // Fade in the control buttons after the game screen appears
+        setTimeout(() => {
+            controls.style.opacity = '1';
+            controls.style.visibility = 'visible';
+        }, 6000);
+    });
+    </script>
+</body>
+</html>
