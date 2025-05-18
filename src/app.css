@@ -1,4 +1,4 @@
-/*! tailwindcss v4.0.4 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.0.3 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
@@ -557,8 +557,17 @@
   .bottom-10 {
     bottom: calc(var(--spacing) * 10);
   }
+  .bottom-\[55\.7\%\] {
+    bottom: 55.7%;
+  }
+  .bottom-\[63\.9\%\] {
+    bottom: 63.9%;
+  }
   .left-0 {
     left: calc(var(--spacing) * 0);
+  }
+  .left-\[32\%\] {
+    left: 32%;
   }
   .z-10 {
     z-index: 10;
@@ -831,8 +840,14 @@
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
+  }
   .gap-8 {
     gap: calc(var(--spacing) * 8);
+  }
+  .gap-42 {
+    gap: calc(var(--spacing) * 42);
   }
   .space-y-5 {
     :where(& > :not(:last-child)) {
@@ -1359,6 +1374,16 @@
       line-height: var(--tw-leading, var(--text-xl--line-height));
     }
   }
+  .md\:bottom-\[38\%\] {
+    @media (width >= 48rem) {
+      bottom: 38%;
+    }
+  }
+  .md\:bottom-\[51\.9\%\] {
+    @media (width >= 48rem) {
+      bottom: 51.9%;
+    }
+  }
   .md\:flex-nowrap {
     @media (width >= 48rem) {
       flex-wrap: nowrap;
@@ -1410,6 +1435,16 @@
   .lg\:top-240 {
     @media (width >= 64rem) {
       top: calc(var(--spacing) * 240);
+    }
+  }
+  .lg\:bottom-\[32\.2\%\] {
+    @media (width >= 64rem) {
+      bottom: 32.2%;
+    }
+  }
+  .lg\:bottom-\[47\.5\%\] {
+    @media (width >= 64rem) {
+      bottom: 47.5%;
     }
   }
   .lg\:left-55 {
